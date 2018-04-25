@@ -14,7 +14,9 @@ import org.springframework.data.mongodb.core.convert.MappingMongoConverter
 import org.springframework.data.mongodb.core.convert.MongoCustomConversions
 import org.springframework.data.mongodb.core.mapping.MongoMappingContext
 import java.time.OffsetDateTime
+import java.time.ZoneId
 import java.time.ZoneOffset
+import java.time.ZonedDateTime
 import java.util.*
 
 /**
@@ -30,14 +32,16 @@ class ConverterTest {
   private lateinit var resolver: DbRefResolver
   private lateinit var converter: MappingMongoConverter
 
-  data class MyDto(val offsetTime: OffsetDateTime? = null)
+  data class MyDto(val offsetTime: OffsetDateTime? = null, val zonedTime: ZonedDateTime? = null)
 
   @BeforeEach
   fun setUp() {
     // custom converter
     val conversions = MongoCustomConversions(listOf(
       OffsetDateTimeReadConverter.INSTANCE,
-      OffsetDateTimeWriteConverter.INSTANCE
+      OffsetDateTimeWriteConverter.INSTANCE,
+      ZonedDateTimeReadConverter.INSTANCE,
+      ZonedDateTimeWriteConverter.INSTANCE
     ))
 
     val mappingContext = MongoMappingContext()
@@ -85,5 +89,42 @@ class ConverterTest {
   fun offsetDateTime_ReadNotExists() {
     val dto = converter.read(MyDto::class.java, Document())
     assertNull(dto.offsetTime)
+  }
+
+  @Test
+  fun zonedDateTime_WriteNotNull() {
+    val dto = MyDto(zonedTime = ZonedDateTime.now())
+    val document = org.bson.Document()
+    converter.write(dto, document)
+    val zonedTime = document["zonedTime"] as Document
+    assertTrue(dto.zonedTime!!.isEqual(ZonedDateTime.ofInstant(
+      zonedTime.getDate("dateTime").toInstant(),
+      ZoneId.of(zonedTime.getString("zone")))
+    ))
+  }
+
+  @Test
+  fun zonedDateTime_WriteNull() {
+    val document = Document()
+    converter.write(MyDto(zonedTime = null), document)
+    assertNull(document["zonedTime"])
+  }
+
+  @Test
+  fun zonedDateTime_ReadNotNull() {
+    val now = ZonedDateTime.now()
+    val document = Document("zonedTime",
+      Document("dateTime", Date.from(now.toInstant()))
+        .append("offset", now.offset.toString())
+        .append("zone", now.zone.toString())
+    )
+    val dto = converter.read(MyDto::class.java, document)
+    assertTrue(dto.zonedTime!!.isEqual(now))
+  }
+
+  @Test
+  fun zonedDateTime_ReadNotExists() {
+    val dto = converter.read(MyDto::class.java, Document())
+    assertNull(dto.zonedTime)
   }
 }
