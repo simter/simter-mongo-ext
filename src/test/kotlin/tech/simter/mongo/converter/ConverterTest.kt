@@ -17,6 +17,7 @@ import java.time.OffsetDateTime
 import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
+import java.time.temporal.ChronoUnit.SECONDS
 import java.util.*
 
 /**
@@ -59,7 +60,7 @@ class ConverterTest {
   @Test
   fun offsetDateTime_WriteNotNull() {
     val dto = MyDto(offsetTime = OffsetDateTime.now())
-    val document = org.bson.Document()
+    val document = Document()
     converter.write(dto, document)
     val uploadOn = document["offsetTime"] as Document
     assertTrue(dto.offsetTime!!.isEqual(OffsetDateTime.ofInstant(
@@ -77,7 +78,7 @@ class ConverterTest {
 
   @Test
   fun offsetDateTime_ReadNotNull() {
-    val now = OffsetDateTime.now()
+    val now = OffsetDateTime.now().truncatedTo(SECONDS)
     val document = Document("offsetTime",
       Document("dateTime", Date.from(now.toInstant())).append("offset", now.offset.toString())
     )
@@ -93,8 +94,8 @@ class ConverterTest {
 
   @Test
   fun zonedDateTime_WriteNotNull() {
-    val dto = MyDto(zonedTime = ZonedDateTime.now())
-    val document = org.bson.Document()
+    val dto = MyDto(zonedTime = ZonedDateTime.now().truncatedTo(SECONDS))
+    val document = Document()
     converter.write(dto, document)
     val zonedTime = document["zonedTime"] as Document
     assertTrue(dto.zonedTime!!.isEqual(ZonedDateTime.ofInstant(
@@ -112,7 +113,7 @@ class ConverterTest {
 
   @Test
   fun zonedDateTime_ReadNotNull() {
-    val now = ZonedDateTime.now()
+    val now = ZonedDateTime.now().truncatedTo(SECONDS)
     val document = Document("zonedTime",
       Document("dateTime", Date.from(now.toInstant()))
         .append("offset", now.offset.toString())
