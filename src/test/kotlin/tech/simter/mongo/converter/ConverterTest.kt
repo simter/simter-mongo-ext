@@ -1,13 +1,13 @@
 package tech.simter.mongo.converter
 
+import io.mockk.impl.annotations.MockK
+import io.mockk.junit5.MockKExtension
 import org.bson.Document
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import org.mockito.Mock
-import org.mockito.junit.jupiter.MockitoExtension
 import org.springframework.context.ApplicationContext
 import org.springframework.data.mongodb.core.convert.DbRefResolver
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter
@@ -25,11 +25,11 @@ import java.util.*
  * [ZonedDateTime with MongoDB](https://stackoverflow.com/questions/41127665/zoneddatetime-with-mongodb#answer-48469443)
  * @author RJ
  */
-@ExtendWith(MockitoExtension::class)
+@ExtendWith(MockKExtension::class)
 class ConverterTest {
-  @Mock
+  @MockK(relaxed = true)
   private lateinit var context: ApplicationContext
-  @Mock
+  @MockK(relaxed = true)
   private lateinit var resolver: DbRefResolver
   private lateinit var converter: MappingMongoConverter
 
