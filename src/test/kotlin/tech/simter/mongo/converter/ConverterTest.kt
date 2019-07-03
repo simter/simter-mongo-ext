@@ -59,7 +59,7 @@ class ConverterTest {
 
   @Test
   fun offsetDateTime_WriteNotNull() {
-    val dto = MyDto(offsetTime = OffsetDateTime.now())
+    val dto = MyDto(offsetTime = OffsetDateTime.now().truncatedTo(SECONDS))
     val document = Document()
     converter.write(dto, document)
     val uploadOn = document["offsetTime"] as Document
