@@ -9,6 +9,7 @@
     <relativePath/>
   </parent>
   <artifactId>simter-mongo-ext</artifactId>
+  <version>1.1.0</version>
   <packaging>jar</packaging>
   <name>simter-mongo-ext</name>
   <dependencies>
