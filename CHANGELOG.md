@@ -1,4 +1,11 @@
-# [simter-mongo-ext](https://github.com/simter/simter-mongo-ext) changelog
+# simter-mongo-ext changelog
+
+## 1.1.0 - 2019-07-03
+
+No code changed, just polishing maven config and unit test.
+
+- Use MockK instead of Mockito
+- Change parent to simter-dependencies-1.2.0
 
 ## 1.0.0 - 2019-01-08
 
